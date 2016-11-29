@@ -1,4 +1,11 @@
+# @date November 2016
+# @author Lazaros Penteridis <lp@ortelio.co.uk>
+#
 PROJECT(pixy_cam)
+set (PIXY_CAM_VERSION_MAJOR 0)
+set (PIXY_CAM_VERSION_MINOR 5)
+set (PIXY_CAM_VERSION_PATCH 0)
+set (PIXY_CAM_VERSION_STRING ${PIXY_CAM_VERSION_MAJOR}.${PIXY_CAM_VERSION_MINOR}.${PIXY_CAM_VERSION_PATCH})
 cmake_minimum_required(VERSION 3.1)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
@@ -50,11 +57,16 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 set(LIBTARGET ${LIBTARGET} pixy_cam)
 add_library(${LIBTARGET} SHARED $<TARGET_OBJECTS:lpixy_cam>)
 
+set_target_properties(${LIBTARGET} PROPERTIES VERSION ${PIXY_CAM_VERSION_STRING} SOVERSION ${PIXY_CAM_VERSION_STRING})
+
 # libpixyusb should always come before libboost and libusb #
-target_link_libraries(pixy_cam pixyusb)
-target_link_libraries(pixy_cam ${OpenCV_LIBS})
-target_link_libraries(pixy_cam ${Boost_LIBRARIES})
-target_link_libraries(pixy_cam ${LIBUSB_1_LIBRARY})
+target_link_libraries(${LIBTARGET} pixyusb)
+target_link_libraries(${LIBTARGET} ${OpenCV_LIBS})
+target_link_libraries(${LIBTARGET} ${Boost_LIBRARIES})
+target_link_libraries(${LIBTARGET} ${LIBUSB_1_LIBRARY})
+set_target_properties(${LIBTARGET} PROPERTIES INSTALL_PATH "${CMAKE_INSTALL_PREFIX}/lib")
+message(STATUS "Building Shared library: lib${LIBTARGET}")
+#
 
 file(STRINGS "cmake/VERSION" LIBPIXY_VERSION)
 add_definitions(-D__LIBPIXY_VERSION__="${LIBPIXY_VERSION}")
@@ -67,7 +79,19 @@ include_directories (src
                      ../../common
                      ${Boost_INCLUDE_DIR}
                      ${LIBUSB_1_INCLUDE_DIRS})
+###
+# Install library 
+#
+set(LIB_VERSION ${PIXY_CAM_VERSION_MAJOR}.${PIXY_CAM_VERSION_MINOR}.${PIXY_CAM_VERSION_PATCH})
+#
+# symbolic link library version to the generic name
+#
+install(TARGETS ${LIBTARGET} DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/")
+install(CODE 
+    "EXECUTE_PROCESS(COMMAND ln -sf ${CMAKE_INSTALL_PREFIX}/lib/libpixy_cam.so.${LIB_VERSION} 
+                                    ${CMAKE_INSTALL_PREFIX}/lib/libpixy_cam.so)")
 
+message(STATUS "Installing library in: `${CMAKE_INSTALL_PREFIX}/lib`")
 #
 # Headers go under /usr/local/include
 #
