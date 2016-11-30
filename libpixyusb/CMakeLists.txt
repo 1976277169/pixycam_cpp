@@ -23,23 +23,22 @@ ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 file(STRINGS "cmake/VERSION" LIBPIXY_VERSION)
 add_definitions(-D__LIBPIXY_VERSION__="${LIBPIXY_VERSION}")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}-std=c++1y -Wall -fPIC")
-add_library (pixyusb SHARED src/chirpreceiver.cpp
-                            src/pixyinterpreter.cpp
-                            src/pixy.cpp
-                            src/usblink.cpp
-                            src/utils/timer.cpp
-                            common/src/chirp.cpp)
+add_library (pixyusb SHARED libpixyusb/src/chirpreceiver.cpp
+                            libpixyusb/src/pixyinterpreter.cpp
+                            libpixyusb/src/pixy.cpp
+                            libpixyusb/src/usblink.cpp
+                            libpixyusb/src/utils/timer.cpp
+                            libpixyusb/common/src/chirp.cpp)
 
 set (THIS_LIB libpixyusb)
 
-include_directories (src
-                     src/util
+include_directories (libpixyusb/src
+                     libpixyusb/src/util
                      include
-                     common/inc
+                     libpixyusb/common/inc
                      ${Boost_INCLUDE_DIR}
                      ${LIBUSB_1_INCLUDE_DIRS})
 
 install (TARGETS pixyusb DESTINATION lib)
-install (FILES include/pixy.h DESTINATION include)
-install (FILES common/inc/pixydefs.h DESTINATION include)
+install (FILES libpixyusb/include/pixy.h DESTINATION include)
+install (FILES libpixyusb/common/inc/pixydefs.h DESTINATION include)

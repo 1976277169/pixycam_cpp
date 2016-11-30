@@ -8,6 +8,8 @@ set (PIXY_CAM_VERSION_PATCH 0)
 set (PIXY_CAM_VERSION_STRING ${PIXY_CAM_VERSION_MAJOR}.${PIXY_CAM_VERSION_MINOR}.${PIXY_CAM_VERSION_PATCH})
 cmake_minimum_required(VERSION 2.8)
 
+include (libpixyusb/CMakeLists.txt)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 # library paths
