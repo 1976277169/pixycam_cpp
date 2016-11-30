@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.1)
+cmake_minimum_required (VERSION 2.8)
 project (libpixyusb CXX)
 
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake" )
@@ -29,17 +29,17 @@ add_library (pixyusb SHARED src/chirpreceiver.cpp
                             src/pixy.cpp
                             src/usblink.cpp
                             src/utils/timer.cpp
-                            ../../common/src/chirp.cpp)
+                            common/src/chirp.cpp)
 
 set (THIS_LIB libpixyusb)
 
 include_directories (src
                      src/util
                      include
-                     ../../common/inc
+                     common/inc
                      ${Boost_INCLUDE_DIR}
                      ${LIBUSB_1_INCLUDE_DIRS})
 
 install (TARGETS pixyusb DESTINATION lib)
 install (FILES include/pixy.h DESTINATION include)
-install (FILES ../../common/inc/pixydefs.h DESTINATION include)
+install (FILES common/inc/pixydefs.h DESTINATION include)
