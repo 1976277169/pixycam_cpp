@@ -68,7 +68,6 @@ add_library(${LIBTARGET} SHARED ${SOURCES})
 set_target_properties(${LIBTARGET} PROPERTIES VERSION ${PIXY_CAM_VERSION_STRING} SOVERSION ${PIXY_CAM_VERSION_STRING})
 
 # libpixyusb should always come before libboost and libusb #
-target_link_libraries(${LIBTARGET} pixyusb)
 target_link_libraries(${LIBTARGET} ${OpenCV_LIBS})
 target_link_libraries(${LIBTARGET} ${Boost_LIBRARIES})
 target_link_libraries(${LIBTARGET} ${LIBUSB_1_LIBRARY})
