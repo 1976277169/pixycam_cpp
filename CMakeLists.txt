@@ -33,14 +33,6 @@ set(INCLUDES ${INCLUDES} includes)
 set(CMAKE_MACOSX_RPATH 1)
 message("Build directory: ${CMAKE_CURRENT_BINARY_DIR}")
 
-include_directories(${INCLUDES}
-                    src
-                    src/util
-                    include
-                    common/inc
-                    ${Boost_INCLUDE_DIR}
-                    ${LIBUSB_1_INCLUDE_DIRS})
-
 set (SOURCES ${SOURCES} 
              ${INCLUDES}/pixy_cam.cpp
              src/chirpreceiver.cpp
@@ -62,13 +54,12 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}-std=c++1y -Wall -fPIC")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 
-set(LIBTARGET ${LIBTARGET} lpixy_cam)
+set(LIBTARGET ${LIBTARGET} pixy_cam)
 add_library(${LIBTARGET} SHARED ${SOURCES})
 
 set_target_properties(${LIBTARGET} PROPERTIES VERSION ${PIXY_CAM_VERSION_STRING} SOVERSION ${PIXY_CAM_VERSION_STRING})
 
 # libpixyusb should always come before libboost and libusb #
-target_link_libraries(${LIBTARGET} pixyusb)
 target_link_libraries(${LIBTARGET} ${OpenCV_LIBS})
 target_link_libraries(${LIBTARGET} ${Boost_LIBRARIES})
 target_link_libraries(${LIBTARGET} ${LIBUSB_1_LIBRARY})
@@ -82,11 +73,14 @@ add_definitions(-D__LIBPIXY_VERSION__="${LIBPIXY_VERSION}")
 add_executable(snap snap.cpp)
 target_link_libraries(snap ${LIBTARGET} ${CMAKE_THREAD_LIBS_INIT})
 
-include_directories (src
-                     includes
-                     common
-                     ${Boost_INCLUDE_DIR}
-                     ${LIBUSB_1_INCLUDE_DIRS})
+include_directories(${INCLUDES}
+                    src
+                    src/util
+                    common
+                    common/inc
+                    ${Boost_INCLUDE_DIR}
+                    ${LIBUSB_1_INCLUDE_DIRS})
+
 ###
 # Install library 
 #
