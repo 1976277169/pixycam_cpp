@@ -17,6 +17,16 @@ find_package(OpenCV REQUIRED)
 find_package(libusb-1.0 REQUIRED)
 find_package(Boost 1.49 COMPONENTS thread system chrono REQUIRED)
 
+# Define Operating System #
+
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+add_definitions(-D__MACOS__)
+ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+add_definitions(-D__LINUX__)
+ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+
 # library paths
 set(LIBRARY_PATH ${LIBRARY_PATH}
               /lib
