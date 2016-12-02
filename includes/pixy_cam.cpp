@@ -3,38 +3,33 @@
 pixy_cam::pixy_cam()
 {
     pixy_init_status = pixy_init();
-    std::cout << "init status: " << pixy_init_status << std::endl;
-
     if(!pixy_init_status == 0)
-    {
-        std::cout << "pixy_init(): " << std::endl;
         pixy_error(pixy_init_status);
-    }
-
     return_value = pixy_command("stop", END_OUT_ARGS, &response, END_IN_ARGS); 
-    std::cout << "return 1: " << return_value << std::endl;
+    if (return_value != 0)    
+        throw std::runtime_error("pixy_command(\"stop\") error");
     return_value = pixy_rcs_set_position(1, 900);
-    std::cout << "return 2: " << return_value << std::endl;
+    if (return_value != 0)    
+        throw std::runtime_error("pixy_rcs_set_position 1st call error");
     return_value = pixy_rcs_set_position(0, 500);
-    std::cout << "return 3: " << return_value << std::endl;
+    if (return_value != 0)    
+        throw std::runtime_error("pixy_rcs_set_position 2nd call error");
 }
 
 bool pixy_cam::get_encoded_img(uint16_t height, uint16_t width)//, const std::String& ext, std::vector<uchar>& buf, const std::vector<int>& params=std::vector<int>())
 {
     cv::Mat image = get_img(height, width);
-    
     std::vector<int> compression_params;
     compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
     compression_params.push_back(9);
-    
     cv::String img_name("snapshot.png");
     try {
         imwrite(img_name, image, compression_params);
     }
     catch (std::exception & e) {
         std::cerr << "Exception: " << e.what() << std::endl;
+        return false;
     }
-
     std::cout << "Saved PNG file." << std::endl;
     return true;
 }
@@ -51,14 +46,19 @@ cv::Mat pixy_cam::get_img(uint16_t height, uint16_t width)
     return_value = pixy_command("run", END_OUT_ARGS, &response, END_IN_ARGS);   
     return_value = pixy_command("stop", END_OUT_ARGS, &response, END_IN_ARGS);
     return_value = pixy_command("cam_getFrame",  // std::String id for remote procedure
-                                 0x01, 0x21,      // mode
+                                 0x01, 0x11,      // mode
                                  0x02,   0,        // xoffset
                                  0x02,   0,         // yoffset
                                  0x02, width,       // width
                                  0x02, height,       // height
                                  0,            // separator
                                  &response, &fourcc, &render_flags, &rwidth, &rheight, &num_pixels, &pixels, 0);
-
+    if (response != 0)
+        throw std::runtime_error("cam_getFrame command didn't return succesfully");
+    if (rheight != height)
+        throw std::runtime_error("cam_getFrame command didn't return the expected image height");
+    if (rwidth!= width)
+        throw std::runtime_error("cam_getFrame command didn't return the expected image width");
     return render_BA81(rwidth, rheight, pixels);
 }
 
@@ -86,7 +86,6 @@ cv::Mat pixy_cam::render_BA81(uint16_t width, uint16_t height, uint8_t *frame)
     }
 
     imageRGB =  cv::Mat(height - 2,width -2, CV_8UC3, data);
-
     return imageRGB;
 }
 
