@@ -42,13 +42,7 @@ public:
     * \param buf is the buffer that will receive the encoded image
     * \param params Format-specific parameters. See opencv's imwrite().
     */
-    bool get_encoded_img(
-                            uint16_t height,
-                            uint16_t width //,
-            //                const std::String& ext,
-            //                std::vector<uchar>& buf,
-            //                const std::vector<int>& params=std::vector<int>()
-                        );
+    bool save_encoded_img();
     
     /**
      * \brief capture a snapshot and call the renderBA81 method to

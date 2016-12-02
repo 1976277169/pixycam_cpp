@@ -16,8 +16,14 @@ pixy_cam::pixy_cam()
         throw std::runtime_error("pixy_rcs_set_position 2nd call error");
 }
 
-bool pixy_cam::get_encoded_img(uint16_t height, uint16_t width)//, const std::String& ext, std::vector<uchar>& buf, const std::vector<int>& params=std::vector<int>())
+bool pixy_cam::save_encoded_img()
 {
+    // currently these height and width values seem to be the only ones that make pixy
+    // cam return a snapshot, not because it doesn't support higher resolution modes
+    // but because of memory limitations with max memsize being 73,728
+    // 320x200 = 64,000 is the only image size that fits this limitation
+    uint16_t height = 200;
+    uint16_t width = 320;
     cv::Mat image = get_img(height, width);
     std::vector<int> compression_params;
     compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
@@ -30,7 +36,6 @@ bool pixy_cam::get_encoded_img(uint16_t height, uint16_t width)//, const std::St
         std::cerr << "Exception: " << e.what() << std::endl;
         return false;
     }
-    std::cout << "Saved PNG file." << std::endl;
     return true;
 }
 

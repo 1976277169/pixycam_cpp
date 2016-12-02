@@ -3,6 +3,8 @@
 int main(int argc, char * argv[])
 {
     pixy_cam pixy;
-    bool result = pixy.get_encoded_img(200, 320);
+    bool result = pixy.save_encoded_img();
+    if (result)
+        std::cout << "image saved succesfully" << std::endl;
     return 0;
 }
