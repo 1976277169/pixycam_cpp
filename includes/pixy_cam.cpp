@@ -46,7 +46,7 @@ cv::Mat pixy_cam::get_img(uint16_t height, uint16_t width)
     return_value = pixy_command("run", END_OUT_ARGS, &response, END_IN_ARGS);   
     return_value = pixy_command("stop", END_OUT_ARGS, &response, END_IN_ARGS);
     return_value = pixy_command("cam_getFrame",  // std::String id for remote procedure
-                                 0x01, 0x11,      // mode
+                                 0x01, 0x21,      // mode
                                  0x02,   0,        // xoffset
                                  0x02,   0,         // yoffset
                                  0x02, width,       // width
