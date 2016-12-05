@@ -39,6 +39,28 @@ bool pixy_cam::save_encoded_img()
     return true;
 }
 
+bool pixy_cam::get_encoded_img(std::vector<uchar>& buf)
+{
+    // currently these height and width values seem to be the only ones that make pixy
+    // cam return a snapshot, not because it doesn't support higher resolution modes
+    // but because of memory limitations with max memsize being 73,728
+    // 320x200 = 64,000 is the only image size that fits this limitation
+    uint16_t height = 200;
+    uint16_t width = 320;
+    cv::Mat image = get_img(height, width);
+    std::vector<int> compression_params;
+    compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+    compression_params.push_back(9);
+    try {
+        imencode(".png", image, buf, compression_params);
+    }
+    catch (std::exception & e) {
+        std::cerr << "Exception: " << e.what() << std::endl;
+        return false;
+    }
+    return true;
+}
+
 cv::Mat pixy_cam::get_img(uint16_t height, uint16_t width)
 {
     unsigned char *pixels;
@@ -72,10 +94,8 @@ cv::Mat pixy_cam::render_BA81(uint16_t width, uint16_t height, uint8_t *frame)
     uint16_t x, y;
     uint8_t r, g, b;
     cv::Mat imageRGB;
-
     frame += width;
     uchar data[3*((height-2)*(width-2))];
-
     uint m = 0;
     for (y=1; y<height-1; y++)
     {
@@ -89,7 +109,6 @@ cv::Mat pixy_cam::render_BA81(uint16_t width, uint16_t height, uint8_t *frame)
         }
         frame++;
     }
-
     imageRGB =  cv::Mat(height - 2,width -2, CV_8UC3, data);
     return imageRGB;
 }

@@ -35,15 +35,17 @@ public:
 
     /**
     * \brief encode the rgb image captured as an OpenCV matrix (cv::Mat)
-    * in the memory to one of the popular image formats (png, jpg)
-    * \param height is the height of the image. Valid values: 200, 400, 800.
-    * \param width is the width of the image. Valid values: 320, 640, 1280.
-    * \param ext is the extension of the encoding ("png", "jpg")
-    * \param buf is the buffer that will receive the encoded image
-    * \param params Format-specific parameters. See opencv's imwrite().
+    * in the memory in one png format
     */
     bool save_encoded_img();
     
+    /**
+    * \brief encode the rgb image captured as an OpenCV matrix (cv::Mat)
+    * in the memory in one png format
+    * \param buf is the buffer that will receive the encoded image
+    */
+    bool get_encoded_img(std::vector<uchar>& buf);
+
     /**
      * \brief capture a snapshot and call the renderBA81 method to
      * render it as RGB image
